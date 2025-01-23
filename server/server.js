@@ -2,10 +2,11 @@ const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
 const { v4: uuidv4 } = require("uuid");
-require('dotenv').config();
+require("dotenv").config();
 const connectDB = require("./db");
+const Message = require("./models/Message");
 
-connectDB(); 
+connectDB();
 
 // Create a new express applicatio n
 const app = express();
@@ -14,8 +15,6 @@ const app = express();
 const server = http.createServer(app);
 // Create a socket.io server and attach it to the http server
 const io = socketIo(server);
-
-let messages = [];
 
 app.get("/", (req, res) => {
   res.send("Hello World");
@@ -26,15 +25,16 @@ io.on("connection", (socket) => {
   console.log(`New client connected: ${socket.id} with username ${username}`);
 
   // Broadcast message to all clients when a new user joins
-  const joinMessage = {
+  const joinMessage = new Message({
     messageId: uuidv4(),
     username: "Chatbot",
     socketId: "system",
     message: `${username} has joined the chat`,
     date: new Date().toISOString(),
-  };
-  messages.push(joinMessage);
-  io.emit("message", joinMessage);
+  });
+  joinMessage.save().then(() => {
+    io.emit("message", joinMessage);
+  });
 
   // Whena  user disconnects
   socket.on("disconnect", () => {
@@ -56,16 +56,17 @@ io.on("connection", (socket) => {
   // Listen for new messages, and broadcast them to all connected clients
   socket.on("message", (messageData) => {
     const { username, socketId, message, messageId, date } = messageData;
-    const newMessage = {
+    const newMessage = new Message({
       username,
       socketId,
       message,
       messageId,
       date,
-    };
-    messages.push(newMessage);
-    console.log("Received message: ", newMessage);
-    io.emit("message", newMessage);
+    });
+    newMessage.save().then(() => {
+      io.emit("message", newMessage);
+      console.log("Received message: ", newMessage);
+    });
   });
 
   //   Listen for edit message event
