@@ -1,7 +1,7 @@
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
-const Message = require("./models/Message");
+
 
 // Create a new express applicatio n
 const app = express();
@@ -21,21 +21,31 @@ io.on("connection", (socket) => {
   const { username } = socket.handshake.query;
   console.log(`New client connected: ${socket.id} with username ${username}`);
 
-// Listen for new messages, and broadcast them to all connected clients
-socket.on("message", (messageObject) => {
-  const { username, socketId, message, messageId, date } = messageObject;
-  const newMessage = new Message({
-    username,
-    socketId,
-    message,
-    messageId,
-    date,
-})
-  messages.push(newMessage);
-  console.log("Received message: ", newMessage);
-  io.emit("message", newMessage);
-});
-    
+  // Broadcast message to all clients when a new user joins
+  const joinMessage = {
+    messageId: "test",
+    username: "Chatbot",
+    socketId: "system",
+    message: `${username} has joined the chat`,
+    date: new Date().toISOString(),
+  };
+  messages.push(joinMessage);
+  io.emit("message", joinMessage);
+
+  // Listen for new messages, and broadcast them to all connected clients
+  socket.on("message", (messageData) => {
+    const { username, socketId, message, messageId, date } = messageData;
+    const newMessage = {
+      username,
+      socketId,
+      message,
+      messageId,
+      date,
+    };
+    messages.push(newMessage);
+    console.log("Received message: ", newMessage);
+    io.emit("message", newMessage);
+  });
 });
 
 const PORT = process.env.PORT || 3000;
