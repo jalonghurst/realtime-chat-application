@@ -48,7 +48,7 @@ function App() {
         </div>
       ) : (
         <div className="flex flex-col w-full h-full p-2 bg-white rounded-lg shadow-md lg:p-6">
-          <ChatRoom />
+            <ChatRoom socket={socket} />
         </div>
       )}
     </div>

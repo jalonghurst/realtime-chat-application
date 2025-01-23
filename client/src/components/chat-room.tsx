@@ -2,11 +2,24 @@ import React from "react";
 import { mockMessages } from "../services/mockData";
 import { Message } from "../types/message";
 
-const ChatRoom: React.FC = () => {
+interface ChatRoomProps {
+    // Will need this for broadcasting messages
+     socket: any;
+}
+   
+const ChatRoom: React.FC<ChatRoomProps> = ({socket}) => {
   // State to store inputted message
   const [messageInput, setMessageInput] = React.useState<string>("");
   // React state to store messages
   const [messages, setMessages] = React.useState<Message[]>(mockMessages);
+
+    const handleSubmitMessage = () => {
+        // Return if message input is empty and 
+        if (!socket && messageInput.trim() === "") {
+            console.log("Message is required");
+            return;
+        }
+    };
 
   return (
     <div className="flex flex-col h-full w-full overflow-hidden">
@@ -36,7 +49,7 @@ const ChatRoom: React.FC = () => {
           className="flex-grow p-2 border border-gray-300 rounded-l"
         />
         <button
-          onClick={() => console.log("send message")}
+          onClick={() => handleSubmitMessage()}
           className="p-2 text-white bg-blue-500 rounded-l hover:bg-gray-200"
         >
           Send
