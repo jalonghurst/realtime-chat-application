@@ -1,4 +1,5 @@
 import './App.css'
+import ChatRoom from './components/chat-room'
 
 function App() {
 
@@ -6,6 +7,7 @@ function App() {
     <>
       <div>
         <h1>Chat app</h1>
+        <ChatRoom />
       </div>
     </>
   )
