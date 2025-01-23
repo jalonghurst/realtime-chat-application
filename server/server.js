@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
+const { v4: uuidv4 } = require("uuid");
 
 // Create a new express applicatio n
 const app = express();
@@ -22,7 +23,7 @@ io.on("connection", (socket) => {
 
   // Broadcast message to all clients when a new user joins
   const joinMessage = {
-    messageId: "test",
+    messageId: uuidv4(),
     username: "Chatbot",
     socketId: "system",
     message: `${username} has joined the chat`,
@@ -37,7 +38,7 @@ io.on("connection", (socket) => {
 
     // Broadcast message to client when a user leaves
     const leaveMessage = {
-      messageId: "testx",
+      messageId: uuidv4(),
       username: "Chatbot",
       socketId: "system",
       message: `${username} has left the chat`,
