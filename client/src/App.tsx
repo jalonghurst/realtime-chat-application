@@ -5,8 +5,10 @@ import ChatRoom from "./components/chat-room";
 
 function App() {
   const [username, setUsername] = useState<string>("");
+  const [socket, setSocket] = useState<any>(null); // Will hold state if socket connection is made
 
   // Function to handle joining chat and establishing socket connection
+  // Trigger socket connection by setting username
   const handleJoinChat = () => {
     // Return if username is empty
     if (username.trim() == "") {
@@ -14,9 +16,11 @@ function App() {
       return;
     }
     if (username) {
-      const newSocket = io("http://localhost:5000", {
+      // Establish socket connection to server port
+      const newSocket = io("http://localhost:3000", {
         query: { username },
       });
+      setSocket(newSocket);
   
       return () => {
         newSocket.close();
@@ -39,7 +43,7 @@ function App() {
             onChange={(e) => setUsername(e.target.value)}
             className="w-full p-2 mb-4 border border-gray-300 rounded"
           />
-          <button onClick={() => handleJoinChat} className="w-full p-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+          <button onClick={handleJoinChat} className="w-full p-2 text-white bg-blue-500 rounded hover:bg-blue-600">
             Join Chat
           </button>
         </div>
