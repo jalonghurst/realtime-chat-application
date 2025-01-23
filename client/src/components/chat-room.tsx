@@ -43,9 +43,14 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
         }
       );
 
+      socket.on("activeUsers", (users: string[]) => {
+        setActiveUsers(users);
+      });
+
       return () => {
         socket.off("message");
         socket.off("editMessage");
+        socket.off("activeUsers");
       };
     }
   }, [socket]);
