@@ -25,6 +25,7 @@ io.on("connection", (socket) => {
   const { username } = socket.handshake.query;
   console.log(`New client connected: ${socket.id} with username ${username}`);
 
+  // Add user to the database collection of active users
   if (username) {
     const newUser = new User({
       username,
@@ -53,47 +54,58 @@ io.on("connection", (socket) => {
     io.emit("message", joinMessage);
   });
 
-  // Whena  user disconnects
+  // When a user disconnects
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
+    User.findOneAndDelete({ socketId: socket.id }).then((user) => {
+      if (user) {
+        User.find().then((users) => {
+          io.emit(
+            "activeUsers",
+            users.map((user) => user.username)
+          );
+        });
 
-    // Broadcast message to client when a user leaves
-    const leaveMessage = {
-      messageId: uuidv4(),
-      username: "Chatbot",
-      socketId: "system",
-      message: `${username} has left the chat`,
-      date: new Date().toISOString(),
-    };
-    messages.push(leaveMessage);
-    console.log("User left:", username);
-    io.emit("message", leaveMessage);
-  });
-
-  // Listen for new messages, and broadcast them to all connected clients
-  socket.on("message", (messageData) => {
-    const { username, socketId, message, messageId, date } = messageData;
-    const newMessage = new Message({
-      username,
-      socketId,
-      message,
-      messageId,
-      date,
+        // Broadcast message to client when a user leaves
+        const leaveMessage = new Message({
+          messageId: uuidv4(),
+          username: "Chatbot",
+          socketId: "system",
+          message: `${username} has left the chat`,
+          date: new Date().toISOString(),
+        });
+        leaveMessage.save().then(() => {
+          io.emit("message", leaveMessage);
+        });
+        console.log("User left:", username);
+      }
     });
-    newMessage.save().then(() => {
-      io.emit("message", newMessage);
-      console.log("Received message: ", newMessage);
-    });
-  });
 
-  //   Listen for edit message event
-  socket.on("editMessage", ({ messageId, updatedMessage }) => {
-    const message = messages.find((msg) => msg.messageId === messageId);
-    if (message) {
-      message.message = updatedMessage;
-      console.log("Edited message:", { messageId, updatedMessage });
-      io.emit("editMessage", { messageId, updatedMessage });
-    }
+    // Listen for new messages, and broadcast them to all connected clients
+    socket.on("message", (messageData) => {
+      const { username, socketId, message, messageId, date } = messageData;
+      const newMessage = new Message({
+        username,
+        socketId,
+        message,
+        messageId,
+        date,
+      });
+      newMessage.save().then(() => {
+        io.emit("message", newMessage);
+        console.log("Received message: ", newMessage);
+      });
+    });
+
+    //   Listen for edit message event
+    socket.on("editMessage", ({ messageId, updatedMessage }) => {
+      const message = messages.find((msg) => msg.messageId === messageId);
+      if (message) {
+        message.message = updatedMessage;
+        console.log("Edited message:", { messageId, updatedMessage });
+        io.emit("editMessage", { messageId, updatedMessage });
+      }
+    });
   });
 });
 
