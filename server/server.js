@@ -63,6 +63,16 @@ io.on("connection", (socket) => {
     console.log("Received message: ", newMessage);
     io.emit("message", newMessage);
   });
+
+  //   Listen for edit message event
+  socket.on("editMessage", ({ messageId, updatedMessage }) => {
+    const message = messages.find((msg) => msg.messageId === messageId);
+    if (message) {
+      message.message = updatedMessage;
+      console.log("Edited message:", { messageId, updatedMessage });
+      io.emit("editMessage", { messageId, updatedMessage });
+    }
+  });
 });
 
 const PORT = process.env.PORT || 3000;
