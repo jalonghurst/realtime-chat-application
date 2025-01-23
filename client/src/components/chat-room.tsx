@@ -19,6 +19,16 @@ const ChatRoom: React.FC<ChatRoomProps> = ({socket}) => {
             console.log("Message is required");
             return;
         }
+        // Emit message creation event to server
+        socket.emit("message", {
+            username: "Test User",
+            socketId: socket.id,
+            message: messageInput,
+            messageId: Math.random().toString(),
+            date: new Date(),
+        });
+        console.log("Message sent");
+        setMessageInput("");
     };
 
   return (
