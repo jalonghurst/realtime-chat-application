@@ -1,14 +1,5 @@
 import React from "react";
-
-interface Message {
-    username: string;
-    socketId: string;
-    message: string;
-    messageId: string;
-    date: Date;
-}
-
-
+import { Message } from "./services/mockData";
 
 const ChatRoom: React.FC = () => {
   // State to store inputted message
