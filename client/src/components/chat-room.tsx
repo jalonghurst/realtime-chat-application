@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { mockMessages } from "../services/mockData";
 import { Message } from "../types/message";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
@@ -11,9 +11,10 @@ interface ChatRoomProps {
 
 const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
   // State to store inputted message
-  const [messageInput, setMessageInput] = React.useState<string>("");
+  const [messageInput, setMessageInput] = useState<string>("");
   // React state to store messages
-  const [messages, setMessages] = React.useState<Message[]>(mockMessages);
+  const [messages, setMessages] = useState<Message[]>(mockMessages);
+  const [editMessageId, setEditMessageId] = useState<string | null>(null);
 
   useEffect(() => {
     // Listen for message event from server
@@ -21,8 +22,29 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
       socket.on("message", (message: Message) => {
         setMessages((prevMessages) => [...prevMessages, message]);
       });
+
+      socket.on(
+        "editMessage",
+        ({
+          messageId,
+          updatedMessage,
+        }: {
+          messageId: string;
+          updatedMessage: string;
+        }) => {
+          setMessages((prevMessages) =>
+            prevMessages.map((msg) =>
+              msg.messageId === messageId
+                ? { ...msg, message: updatedMessage }
+                : msg
+            )
+          );
+        }
+      );
+
       return () => {
         socket.off("message");
+        socket.off("editMessage");
       };
     }
   }, [socket]);
@@ -33,16 +55,30 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
       console.log("Message is required");
       return;
     }
-    // Emit message creation event to server
-    socket.emit("message", {
-      username: username,
-      socketId: socket.id,
-      message: messageInput,
-      messageId: uuidv4(),
-      date: new Date(),
-    });
-    console.log("Message sent");
+    if (editMessageId) {
+      socket.emit("edit-message", {
+        messageId: editMessageId,
+        updatedMessage: messageInput,
+      });
+      setEditMessageId(null);
+      console.log(`Message to be edited: ${messageInput} by ${username}`);
+    } else {
+      // Emit message creation event to server
+      socket.emit("message", {
+        username: username,
+        socketId: socket.id,
+        message: messageInput,
+        messageId: uuidv4(),
+        date: new Date().toISOString(),
+      });
+      console.log(`Message sent: ${messageInput} by ${username}`);
+    }
     setMessageInput("");
+  };
+
+  const handleEditMessage = (messageId: string, message: string) => {
+    setMessageInput(message);
+    setEditMessageId(messageId);
   };
 
   return (
@@ -62,7 +98,12 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
               <p>{msg.message}</p>
               {msg.username === username && (
                 <span className="flex flex-row items-center text-xs transition-opacity duration-200 opacity=0 group-hover:opacity-100">
-                  <PencilIcon className="w-3 h-3 ml-1 text-gray-400 cursor-pointer" />
+                  <PencilIcon
+                    className="w-3 h-3 ml-1 text-gray-400 cursor-pointer"
+                    onClick={() =>
+                      handleEditMessage(msg.messageId, msg.message)
+                    }
+                  />
                   <TrashIcon className="w-3 h-3 ml-1 text-gray-400 cursor-pointer" />
                 </span>
               )}
@@ -79,10 +120,10 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
           className="flex-grow p-2 border border-gray-300 rounded-l"
         />
         <button
-          onClick={() => handleSubmitMessage()}
+          onClick={handleSubmitMessage}
           className="p-2 text-white bg-blue-500 rounded-l hover:bg-gray-200"
         >
-          Send
+          {editMessageId ? "Edit" : "Send"}
         </button>
       </div>
     </div>
