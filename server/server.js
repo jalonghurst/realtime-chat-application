@@ -43,7 +43,7 @@ io.on("connection", (socket) => {
     // Broadcast message to client when a user leaves
     const leaveMessage = {
       messageId: uuidv4(),
-      username: "Chatbot",
+      username: "Chatbot", 
       socketId: "system",
       message: `${username} has left the chat`,
       date: new Date().toISOString(),

@@ -82,11 +82,11 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full overflow-hidden">
+    <div className="flex flex-col w-full h-full overflow-hidden">
       <div className="">Status Meetup Standup</div>
       <div className="flex flex-col flex-1 overflow-hidden">
         <div> Participants(8)</div>
-        <div className="flex-1 p-4 overflow-y-auto bg-white overflow-y-auto">
+        <div className="flex-1 p-4 overflow-y-auto bg-white">
           {messages.map((msg) => (
             <div key={msg.messageId} className="flex flex-col mb-2 group">
               <div>
@@ -111,7 +111,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
           ))}
         </div>
       </div>
-      <div className="flex p-2 border-t border-gray-300 flex-shrink-0 bordert-t-1 bg-white">
+      <div className="flex flex-shrink-0 p-2 bg-white border-t border-gray-300 bordert-t-1">
         <input
           type="text"
           value={messageInput}
