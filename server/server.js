@@ -1,6 +1,7 @@
 const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
+const Message = require("./models/Message");
 
 // Create a new express applicatio n
 const app = express();
@@ -23,13 +24,13 @@ io.on("connection", (socket) => {
 // Listen for new messages, and broadcast them to all connected clients
 socket.on("message", (messageObject) => {
   const { username, socketId, message, messageId, date } = messageObject;
-  const newMessage = {
+  const newMessage = new Message({
     username,
     socketId,
     message,
     messageId,
     date,
-  };
+})
   messages.push(newMessage);
   console.log("Received message: ", newMessage);
   io.emit("message", newMessage);
