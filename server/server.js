@@ -2,7 +2,6 @@ const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
 
-
 // Create a new express applicatio n
 const app = express();
 
@@ -31,6 +30,23 @@ io.on("connection", (socket) => {
   };
   messages.push(joinMessage);
   io.emit("message", joinMessage);
+
+  // Whena  user disconnects
+  socket.on("disconnect", () => {
+    console.log(`User disconnected: ${socket.id}`);
+
+    // Broadcast message to client when a user leaves
+    const leaveMessage = {
+      messageId: "testx",
+      username: "Chatbot",
+      socketId: "system",
+      message: `${username} has left the chat`,
+      date: new Date().toISOString(),
+    };
+    messages.push(leaveMessage);
+    console.log("User left:", username);
+    io.emit("message", leaveMessage);
+  });
 
   // Listen for new messages, and broadcast them to all connected clients
   socket.on("message", (messageData) => {
