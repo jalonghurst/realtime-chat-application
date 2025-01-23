@@ -2,6 +2,10 @@ const express = require("express");
 const http = require("http");
 const socketIo = require("socket.io");
 const { v4: uuidv4 } = require("uuid");
+require('dotenv').config();
+const connectDB = require("./db");
+
+connectDB(); 
 
 // Create a new express applicatio n
 const app = express();
