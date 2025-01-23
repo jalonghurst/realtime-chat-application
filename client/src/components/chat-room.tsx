@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { mockMessages } from "../services/mockData";
 import { Message } from "../types/message";
 
@@ -11,7 +11,19 @@ const ChatRoom: React.FC<ChatRoomProps> = ({socket}) => {
   // State to store inputted message
   const [messageInput, setMessageInput] = React.useState<string>("");
   // React state to store messages
-  const [messages, setMessages] = React.useState<Message[]>(mockMessages);
+    const [messages, setMessages] = React.useState<Message[]>(mockMessages);
+    
+    useEffect(() => {
+        // Listen for message event from server
+        if (socket) {
+            socket.on("message", (message: Message) => {
+                setMessages((prevMessages) => [...prevMessages, message]);
+            });
+            return () => {
+                socket.off("message");
+            };
+        }
+    }, [socket]);
 
     const handleSubmitMessage = () => {
         // Return if message input is empty and 

@@ -19,7 +19,6 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   const { username } = socket.handshake.query;
   console.log(`New client connected: ${socket.id} with username ${username}`);
-});
 
 // Listen for new messages, and broadcast them to all connected clients
 socket.on("message", (messageObject) => {
@@ -34,6 +33,8 @@ socket.on("message", (messageObject) => {
   messages.push(newMessage);
   console.log("Received message: ", newMessage);
   io.emit("message", newMessage);
+});
+    
 });
 
 const PORT = process.env.PORT || 3000;
