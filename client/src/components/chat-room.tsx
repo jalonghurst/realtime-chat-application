@@ -4,7 +4,8 @@ import { Message } from "../types/message";
 
 const ChatRoom: React.FC = () => {
   // State to store inputted message
-  const [messageInput, setMessageInput] = React.useState<string>("");
+    const [messageInput, setMessageInput] = React.useState<string>("");
+ // Reactstate to store messages
   const [messages, setMessages] = React.useState<Message[]>(mockMessages);
 
   return (
