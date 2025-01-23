@@ -19,6 +19,7 @@ function App() {
       // Establish socket connection to server port
       const newSocket = io("http://localhost:3000", {
         query: { username },
+        transports: ["websocket"],
       });
       setSocket(newSocket);
   
