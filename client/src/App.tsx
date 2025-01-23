@@ -26,14 +26,12 @@ function App() {
         newSocket.close();
       };
     }
-
-
   };
 
   return (
     <div className="flex flex-col items-center justfy-center w-full h-full max-h-screen p-2 bg-gray-100 lg:p-8">
-      {/* Show if no username is set, otherwise show chat */}
-      {!username ? (
+      {/* Show if no connection to socket, otherwise show chat. Otherwise socket connection is requested early as soon as typing into username input */}
+      {!socket ? (
         <div className="w-full max-w-xl p-6 bg-white rounded-lg shadow-md">
           <h1 className="mb-4 text-2xl font-bold">Join Chat</h1>
           <input
