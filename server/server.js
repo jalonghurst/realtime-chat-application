@@ -16,7 +16,7 @@ const app = express();
 // Enable CORS for express
 app.use(
   cors({
-    origin: "http://localhost:5174", // Allow the Vite development server's frontend to connect (adjust if necessary)
+    origin: "http://localhost:5174",
     methods: ["GET", "POST"],
     credentials: true, // Allow credentials if necessary
   })
@@ -30,11 +30,6 @@ app.use("/api", apiRoutes); // Attach API routes toexpress app
 const server = http.createServer(app);
 // Create a socket.io server and attach it to the http server
 const io = socketIo(server, {
-  cors: {
-    origin: "http://localhost:5174",
-    methods: ["GET", "POST"],
-    credentials: true, // Allow credentials if necessary
-  },
   transports: ["websocket"], // Allow only WebSocket transport
 });
 
@@ -75,6 +70,36 @@ io.on("connection", (socket) => {
     io.emit("message", joinMessage);
   });
 
+  // Listen for new messages, and broadcast them to all connected clients
+  socket.on("message", (messageData) => {
+    const { username, socketId, message, messageId, date } = messageData;
+    const newMessage = new Message({
+      username,
+      socketId,
+      message,
+      messageId,
+      date,
+    });
+    newMessage.save().then(() => {
+      console.log("Received message: ", newMessage);
+      io.emit("message", newMessage);
+    });
+  });
+
+  //   Listen for edit message event
+  socket.on("editMessage", ({ messageId, updatedMessage }) => {
+    Message.findOneAndUpdate(
+      { messageId },
+      { message: updatedMessage },
+      { new: true }
+    ).then((message) => {
+      if (message) {
+        console.log("Edited message:", { messageId, updatedMessage });
+        io.emit("editMessage", { messageId, updatedMessage });
+      }
+    });
+  });
+
   // When a user disconnects
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
@@ -99,32 +124,6 @@ io.on("connection", (socket) => {
           io.emit("message", leaveMessage);
         });
         console.log("User left:", username);
-      }
-    });
-
-    // Listen for new messages, and broadcast them to all connected clients
-    socket.on("message", (messageData) => {
-      const { username, socketId, message, messageId, date } = messageData;
-      const newMessage = new Message({
-        username,
-        socketId,
-        message,
-        messageId,
-        date,
-      });
-      newMessage.save().then(() => {
-        io.emit("message", newMessage);
-        console.log("Received message: ", newMessage);
-      });
-    });
-
-    //   Listen for edit message event
-    socket.on("editMessage", ({ messageId, updatedMessage }) => {
-      const message = messages.find((msg) => msg.messageId === messageId);
-      if (message) {
-        message.message = updatedMessage;
-        console.log("Edited message:", { messageId, updatedMessage });
-        io.emit("editMessage", { messageId, updatedMessage });
       }
     });
   });

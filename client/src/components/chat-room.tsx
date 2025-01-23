@@ -13,7 +13,7 @@ interface ChatRoomProps {
 const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
   // State to store inputted message
   const [messageInput, setMessageInput] = useState<string>("");
-  // React state to store messages
+  // React state to store messages from server
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [editMessageId, setEditMessageId] = useState<string | null>(null);
   const [activeUsers, setActiveUsers] = useState<string[]>([]);
@@ -60,30 +60,26 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
   }, [socket]);
 
   const handleSubmitMessage = () => {
-    // Return if message input is empty and
-    if (!socket && messageInput.trim() === "") {
-      console.log("Message is required");
-      return;
+    if (socket && messageInput.trim()) {
+      if (editMessageId) {
+        socket.emit("editMessage", {
+          messageId: editMessageId,
+          updatedMessage: messageInput,
+        });
+        setEditMessageId(null);
+        console.log(`Message to be edited: ${messageInput} by ${username}`);
+      } else {
+        socket.emit("message", {
+          username,
+          socketId: socket.id,
+          messageInput,
+          messageId: uuidv4(),
+          date: new Date().toISOString(),
+        });
+        console.log(`Message sent: ${messageInput} by ${username}`);
+      }
+      setMessageInput("");
     }
-    if (editMessageId) {
-      socket.emit("edit-message", {
-        messageId: editMessageId,
-        updatedMessage: messageInput,
-      });
-      setEditMessageId(null);
-      console.log(`Message to be edited: ${messageInput} by ${username}`);
-    } else {
-      // Emit message creation event to server
-      socket.emit("message", {
-        username: username,
-        socketId: socket.id,
-        message: messageInput,
-        messageId: uuidv4(),
-        date: new Date().toISOString(),
-      });
-      console.log(`Message sent: ${messageInput} by ${username}`);
-    }
-    setMessageInput("");
   };
 
   const handleEditMessage = (messageId: string, message: string) => {
