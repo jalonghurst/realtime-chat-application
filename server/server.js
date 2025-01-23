@@ -6,16 +6,37 @@ require("dotenv").config();
 const connectDB = require("./db");
 const Message = require("./models/Message");
 const User = require("./models/User");
+const apiRoutes = require("./api");
+const cors = require("cors");
 
 connectDB();
 
 // Create a new express applicatio n
 const app = express();
+// Enable CORS for express
+app.use(
+  cors({
+    origin: "http://localhost:5174", // Allow the Vite development server's frontend to connect (adjust if necessary)
+    methods: ["GET", "POST"],
+    credentials: true, // Allow credentials if necessary
+  })
+);
+
+app.use(express.json()); // Enable JSON parsing for incoming requests
+
+app.use("/api", apiRoutes); // Attach API routes toexpress app
 
 // Create a http server
 const server = http.createServer(app);
 // Create a socket.io server and attach it to the http server
-const io = socketIo(server);
+const io = socketIo(server, {
+  cors: {
+    origin: "http://localhost:5174",
+    methods: ["GET", "POST"],
+    credentials: true, // Allow credentials if necessary
+  },
+  transports: ["websocket"], // Allow only WebSocket transport
+});
 
 app.get("/", (req, res) => {
   res.send("Hello World");

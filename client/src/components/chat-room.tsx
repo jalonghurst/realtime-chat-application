@@ -3,6 +3,7 @@ import { mockMessages } from "../services/mockData";
 import { Message } from "../types/message";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { v4 as uuidv4 } from "uuid";
+import { fetchUsersAndMessages } from "../services/fetchData";
 
 interface ChatRoomProps {
   socket: any;
@@ -18,6 +19,9 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
   const [activeUsers, setActiveUsers] = useState<string[]>([]);
 
   useEffect(() => {
+    // Fetch intial data from db
+    fetchUsersAndMessages(setActiveUsers, setMessages);
+
     // Listen for message event from server
     if (socket) {
       socket.on("message", (message: Message) => {
