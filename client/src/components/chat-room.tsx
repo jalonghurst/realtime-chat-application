@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { mockMessages } from "../services/mockData";
 import { Message } from "../types/message";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import { v4 as uuidv4 } from "uuid";
 
 interface ChatRoomProps {
   socket: any;
@@ -37,7 +38,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
       username: username,
       socketId: socket.id,
       message: messageInput,
-      messageId: Math.random().toString(),
+      messageId: uuidv4(),
       date: new Date(),
     });
     console.log("Message sent");
