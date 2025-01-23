@@ -22,7 +22,7 @@ function App() {
         transports: ["websocket"],
       });
       setSocket(newSocket);
-  
+
       return () => {
         newSocket.close();
       };
@@ -42,13 +42,16 @@ function App() {
             onChange={(e) => setUsername(e.target.value)}
             className="w-full p-2 mb-4 border border-gray-300 rounded"
           />
-          <button onClick={handleJoinChat} className="w-full p-2 text-white bg-blue-500 rounded hover:bg-blue-600">
+          <button
+            onClick={handleJoinChat}
+            className="w-full p-2 text-white bg-blue-500 rounded hover:bg-blue-600"
+          >
             Join Chat
           </button>
         </div>
       ) : (
         <div className="flex flex-col w-full h-full p-2 bg-white rounded-lg shadow-md lg:p-6">
-            <ChatRoom socket={socket} />
+          <ChatRoom socket={socket} username={username} />
         </div>
       )}
     </div>

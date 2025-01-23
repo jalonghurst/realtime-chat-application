@@ -1,47 +1,48 @@
 import React, { useEffect } from "react";
 import { mockMessages } from "../services/mockData";
 import { Message } from "../types/message";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 
 interface ChatRoomProps {
-    // Will need this for broadcasting messages
-     socket: any;
+  socket: any;
+  username: string;
 }
-   
-const ChatRoom: React.FC<ChatRoomProps> = ({socket}) => {
+
+const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
   // State to store inputted message
   const [messageInput, setMessageInput] = React.useState<string>("");
   // React state to store messages
-    const [messages, setMessages] = React.useState<Message[]>(mockMessages);
-    
-    useEffect(() => {
-        // Listen for message event from server
-        if (socket) {
-            socket.on("message", (message: Message) => {
-                setMessages((prevMessages) => [...prevMessages, message]);
-            });
-            return () => {
-                socket.off("message");
-            };
-        }
-    }, [socket]);
+  const [messages, setMessages] = React.useState<Message[]>(mockMessages);
 
-    const handleSubmitMessage = () => {
-        // Return if message input is empty and 
-        if (!socket && messageInput.trim() === "") {
-            console.log("Message is required");
-            return;
-        }
-        // Emit message creation event to server
-        socket.emit("message", {
-            username: "Test User",
-            socketId: socket.id,
-            message: messageInput,
-            messageId: Math.random().toString(),
-            date: new Date(),
-        });
-        console.log("Message sent");
-        setMessageInput("");
-    };
+  useEffect(() => {
+    // Listen for message event from server
+    if (socket) {
+      socket.on("message", (message: Message) => {
+        setMessages((prevMessages) => [...prevMessages, message]);
+      });
+      return () => {
+        socket.off("message");
+      };
+    }
+  }, [socket]);
+
+  const handleSubmitMessage = () => {
+    // Return if message input is empty and
+    if (!socket && messageInput.trim() === "") {
+      console.log("Message is required");
+      return;
+    }
+    // Emit message creation event to server
+    socket.emit("message", {
+      username: username,
+      socketId: socket.id,
+      message: messageInput,
+      messageId: Math.random().toString(),
+      date: new Date(),
+    });
+    console.log("Message sent");
+    setMessageInput("");
+  };
 
   return (
     <div className="flex flex-col h-full w-full overflow-hidden">
@@ -58,6 +59,12 @@ const ChatRoom: React.FC<ChatRoomProps> = ({socket}) => {
                 </span>
               </div>
               <p>{msg.message}</p>
+              {msg.username === username && (
+                <span className="flex flex-row items-center text-xs transition-opacity duration-200 opacity=0 group-hover:opacity-100">
+                  <PencilIcon className="w-3 h-3 ml-1 text-gray-400 cursor-pointer" />
+                  <TrashIcon className="w-3 h-3 ml-1 text-gray-400 cursor-pointer" />
+                </span>
+              )}
             </div>
           ))}
         </div>
