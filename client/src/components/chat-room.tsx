@@ -15,6 +15,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
   // React state to store messages
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [editMessageId, setEditMessageId] = useState<string | null>(null);
+  const [activeUsers, setActiveUsers] = useState<string[]>([]);
 
   useEffect(() => {
     // Listen for message event from server
@@ -85,7 +86,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
     <div className="flex flex-col w-full h-full overflow-hidden">
       <div className="">Status Meetup Standup</div>
       <div className="flex flex-col flex-1 overflow-hidden">
-        <div> Participants(8)</div>
+        <div> Participants(8) {activeUsers}</div>
         <div className="flex-1 p-4 overflow-y-auto bg-white">
           {messages.map((msg) => (
             <div key={msg.messageId} className="flex flex-col mb-2 group">
