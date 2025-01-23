@@ -1,11 +1,4 @@
-export interface Message {
-    username: string;
-    socketId: string;
-    message: string;
-    messageId: string;
-    date: Date;
-}
-
+import {Message} from "../types/message";
 
 // Test data, delete once I have db setup
 export const mockMessages: Message[] = [
