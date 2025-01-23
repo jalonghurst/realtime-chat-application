@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
 const connectDB = require("./db");
 const Message = require("./models/Message");
+const User = require("./models/User");
 
 connectDB();
 
@@ -23,6 +24,22 @@ app.get("/", (req, res) => {
 io.on("connection", (socket) => {
   const { username } = socket.handshake.query;
   console.log(`New client connected: ${socket.id} with username ${username}`);
+
+  if (username) {
+    const newUser = new User({
+      username,
+      socketId: socket.id,
+    });
+    newUser.save().then(() => {
+      User.find().then((users) => {
+        io.emit(
+          "activeUsers",
+          users.map((user) => user.username)
+        );
+        console.log("New active user added to the database:", newUser);
+      });
+    });
+  }
 
   // Broadcast message to all clients when a new user joins
   const joinMessage = new Message({
@@ -43,7 +60,7 @@ io.on("connection", (socket) => {
     // Broadcast message to client when a user leaves
     const leaveMessage = {
       messageId: uuidv4(),
-      username: "Chatbot", 
+      username: "Chatbot",
       socketId: "system",
       message: `${username} has left the chat`,
       date: new Date().toISOString(),
