@@ -5,6 +5,7 @@ import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
 import { v4 as uuidv4 } from "uuid";
 import { fetchUsersAndMessages } from "../services/fetchData";
 import { formatTime } from "../utils/formatTime";
+import useSocket from "../hooks/useSocket";
 
 interface ChatRoomProps {
   socket: any;
@@ -25,51 +26,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
     });
   }, []);
 
-  useEffect(() => {
-    if (socket) {
-      const handleMessage = (messageData: Message) => {
-        setMessages((prevMessages) => [...prevMessages, messageData]);
-      };
-
-      const handleDeleteMessage = (messageId: string) => {
-        setMessages((prevMessages) =>
-          prevMessages.filter((msg) => msg.messageId !== messageId)
-        );
-      };
-
-      const handleEditMessage = ({
-        messageId,
-        updatedMessage,
-      }: {
-        messageId: string;
-        updatedMessage: string;
-      }) => {
-        setMessages((prevMessages) =>
-          prevMessages.map((msg) =>
-            msg.messageId === messageId
-              ? { ...msg, message: updatedMessage }
-              : msg
-          )
-        );
-      };
-
-      const handleActiveUsers = (users: string[]) => {
-        setActiveUsers(users);
-      };
-
-      socket.on("message", handleMessage);
-      socket.on("deleteMessage", handleDeleteMessage);
-      socket.on("editMessage", handleEditMessage);
-      socket.on("activeUsers", handleActiveUsers);
-
-      return () => {
-        socket.off("message", handleMessage);
-        socket.off("deleteMessage", handleDeleteMessage);
-        socket.off("editMessage", handleEditMessage);
-        socket.off("activeUsers", handleActiveUsers);
-      };
-    }
-  }, [socket]);
+  useSocket(socket, setMessages, setActiveUsers);
 
   const handleSubmitMessage = () => {
     if (socket && messageInput.trim()) {
