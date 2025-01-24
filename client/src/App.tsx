@@ -4,33 +4,29 @@ import ChatRoom from "./components/chat-room";
 
 function App() {
   const [username, setUsername] = useState<string>("");
-  const [socket, setSocket] = useState<Socket | null>(null); // Will hold state if socket connection is made
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   // Function to handle joining chat and establishing socket connection
   // Trigger socket connection by setting username
   const handleJoinChat = () => {
-    // Return if username is empty
     if (username.trim() === "") {
       console.log("Username is required");
       return;
     }
-    if (username) {
-      // Establish socket connection to server port
-      const newSocket = io("http://localhost:3000", {
-        query: { username },
-        transports: ["websocket"],
-      });
-      setSocket(newSocket);
+    // Establish socket connection to server port
+    const newSocket = io("http://localhost:3000", {
+      query: { username },
+      transports: ["websocket"],
+    });
+    setSocket(newSocket);
 
-      return () => {
-        newSocket.close();
-      };
-    }
+    return () => {
+      newSocket.close();
+    };
   };
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full max-h-screen p-2 bg-gray-100 lg:p-8">
-      {/* Show this only if no connection */}
       {!socket ? (
         <div className="w-full max-w-xl p-6 bg-white rounded-lg shadow-md">
           <h1 className="mb-4 text-2xl font-bold">Join Chat</h1>
