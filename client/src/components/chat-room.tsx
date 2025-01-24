@@ -101,7 +101,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
                     {formatTime(msg.date)}
                   </span>
                 </div>
-                <div className="flex-row items-center">
+                <div className="flex flex-row items-center">
                   <p
                     className={msg.socketId === "system" ? "text-gray-500" : ""}
                   >
