@@ -129,7 +129,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
           <div className="participants-list">
             <ul>
               {activeUsers.map((user, index) => (
-                <li key={index} className="mb-2">
+                <li key={index} className="p-3 mt-2 border-b border-gray-300">
                   {user}
                 </li>
               ))}
