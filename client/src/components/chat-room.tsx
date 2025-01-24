@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { mockMessages } from "../services/mockData";
 import { Message } from "../types/message";
 import { v4 as uuidv4 } from "uuid";
 import { fetchUsersAndMessages } from "../services/fetchData";
@@ -15,14 +14,18 @@ interface ChatRoomProps {
 
 const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
   const [messageInput, setMessageInput] = useState<string>("");
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [editMessageId, setEditMessageId] = useState<string | null>(null);
   const [activeUsers, setActiveUsers] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState<string>("chat");
+  const [loading, setLoading] = useState<boolean>(true);
+  
 
   useEffect(() => {
     fetchUsersAndMessages(setActiveUsers, setMessages).catch((error) => {
       console.error("Error fetching initial data:", error);
+    }).finally(() => {
+      setLoading(false);
     });
   }, []);
 
@@ -62,6 +65,10 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
       socket.emit("deleteMessage", { messageId });
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="chat-container">
