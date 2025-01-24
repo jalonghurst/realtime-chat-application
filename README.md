@@ -2,6 +2,9 @@ Real-time Chat Application
 
 A chat app built with React, Vite, Tailwind CSS, Express, and Socket.io. Users have the ability to join the chat by submitting their name, then they can send, edit or delete their own messages. User can also view the chat history, and a list of active users.
 
+![Chat Application Demo](https://github.com/jalonghurst/realtime-chat-application/blob/main/client/public/websocket-app.gif)
+
+
 ## Technologies Used
 
 - **Frontend**: React, Vite, Tailwind CSS
