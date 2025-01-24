@@ -6,9 +6,10 @@ import { v4 as uuidv4 } from "uuid";
 import { fetchUsersAndMessages } from "../services/fetchData";
 import { formatTime } from "../utils/formatTime";
 import useSocket from "../hooks/useSocket";
+import { Socket } from "socket.io-client";
 
 interface ChatRoomProps {
-  socket: any;
+  socket: Socket;
   username: string;
 }
 
