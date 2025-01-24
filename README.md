@@ -7,7 +7,7 @@ A chat app built with React, Vite, Tailwind CSS, Express, and Socket.io. Users h
 
 ## Technologies Used
 
-- **Frontend**: React, Typescript, Vite, Tailwind CSS
+- **Frontend**: React, TypeScript, Vite, Tailwind CSS
 - **Backend**: Express, Socket.io, Mongoose
 - **Database**: MongoDB
 
