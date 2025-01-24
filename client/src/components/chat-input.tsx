@@ -21,7 +21,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
         value={messageInput}
         onChange={(e) => setMessageInput(e.target.value)}
         placeholder="Message"
-        className="flex-grow p-2 border border-gray-300 rounded-l focus:outline-none focus:border-transparent"
+        className="flex-grow p-2 border border-gray-300 rounded-l focus:outline-none focus:border-gray-400"
       />
       <button
         onClick={handleSubmitMessage}
