@@ -15,7 +15,7 @@ const ChatInput: React.FC<ChatInputProps> = ({
   editMessageId,
 }) => {
   return (
-    <div className="flex p-2 border-t border-gray-300 chat-input bg-gray-50">
+    <div className="chat-input">
       <input
         type="text"
         value={messageInput}

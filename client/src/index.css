@@ -36,7 +36,7 @@ a:hover {
 }
 
 .chat-messages {
-  @apply flex-1 overflow-y-auto flex-1 p-4 overflow-y-auto bg-white;
+  @apply flex-1 overflow-y-auto p-4 bg-white;
 }
 
 .chat-input {

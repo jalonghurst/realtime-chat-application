@@ -32,7 +32,7 @@ const io = socketIo(server, {
   cors: {
     origin: "*",
     methods: ["GET", "POST"],
-    credentials: true, // Allow credentials if necessary
+    credentials: true,
   },
   transports: ["websocket"],
 });
