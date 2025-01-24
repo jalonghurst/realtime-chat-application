@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { mockMessages } from "../services/mockData";
 import { Message } from "../types/message";
-import { PencilIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { v4 as uuidv4 } from "uuid";
 import { fetchUsersAndMessages } from "../services/fetchData";
 import useSocket from "../hooks/useSocket";
 import { Socket } from "socket.io-client";
 import ChatMessages from "./chat-messages";
+import ChatInput from "./chat-input";
 
 interface ChatRoomProps {
   socket: Socket;
@@ -95,25 +95,12 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
               handleEditMessage={handleEditMessage}
               handleDeleteMessage={handleDeleteMessage}
             />
-            <div className="chat-input">
-              <input
-                type="text"
-                value={messageInput}
-                onChange={(e) => setMessageInput(e.target.value)}
-                placeholder="Message"
-                className="flex-grow p-2 border border-gray-300 rounded-l focus:border-gray-400 focus:outline-none"
-              />
-              <button
-                onClick={handleSubmitMessage}
-                className="p-2 text-white bg-blue-500 rounded-r hover:bg-blue-600"
-              >
-                {editMessageId ? (
-                  <PencilIcon className="w-5 h-5" />
-                ) : (
-                  <PaperAirplaneIcon className="w-5 h-5" />
-                )}
-              </button>
-            </div>
+             <ChatInput
+              messageInput={messageInput}
+              setMessageInput={setMessageInput}
+              handleSubmitMessage={handleSubmitMessage}
+              editMessageId={editMessageId}
+            />
           </>
         ) : (
           <div className="participants-list">
