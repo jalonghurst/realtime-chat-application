@@ -1,10 +1,10 @@
 import { useState } from "react";
-import io from "socket.io-client";
+import io, { Socket } from "socket.io-client";
 import ChatRoom from "./components/chat-room";
 
 function App() {
   const [username, setUsername] = useState<string>("");
-  const [socket, setSocket] = useState<any>(null); // Will hold state if socket connection is made
+  const [socket, setSocket] = useState<Socket | null>(null); // Will hold state if socket connection is made
 
   // Function to handle joining chat and establishing socket connection
   // Trigger socket connection by setting username
@@ -55,6 +55,6 @@ function App() {
       )}
     </div>
   );
-};
+}
 
 export default App;
