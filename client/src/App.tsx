@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import io, { Socket } from "socket.io-client";
 import ChatRoom from "./components/chat-room";
 
@@ -18,11 +18,16 @@ function App() {
       transports: ["websocket"],
     });
     setSocket(newSocket);
-
-    return () => {
-      newSocket.close();
-    };
   };
+  // Clean up when component unmounts
+    useEffect(() => {
+      return () => {
+        if (socket) {
+          socket.close();
+        }
+      };
+    }, [socket]);
+  
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-full max-h-screen p-2 bg-gray-100 lg:p-8">
