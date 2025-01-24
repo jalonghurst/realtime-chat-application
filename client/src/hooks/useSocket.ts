@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { Message } from '../types/message';
+import { Socket } from 'socket.io-client';
 
 const useSocket = (
-  socket: any,
+  socket: Socket,
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>,
   setActiveUsers: React.Dispatch<React.SetStateAction<string[]>>
 ) => {
