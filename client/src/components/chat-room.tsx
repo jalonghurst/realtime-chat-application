@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { mockMessages } from "../services/mockData";
 import { Message } from "../types/message";
-import {
-  PencilIcon,
-  TrashIcon,
-  PaperAirplaneIcon,
-} from "@heroicons/react/24/solid";
+import { PencilIcon, PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import { v4 as uuidv4 } from "uuid";
 import { fetchUsersAndMessages } from "../services/fetchData";
-import { formatTime } from "../utils/formatTime";
 import useSocket from "../hooks/useSocket";
 import { Socket } from "socket.io-client";
+import ChatMessages from "./chat-messages";
 
 interface ChatRoomProps {
   socket: Socket;
@@ -92,39 +88,33 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
           </div>
         </div>
         {activeTab === "chat" ? (
-          <div className="chat-messages">
-            {messages.map((msg) => (
-              <div key={msg.messageId} className={"flex flex-col mb-2 group"}>
-                <div>
-                  <strong>{msg.username}</strong>
-                  <span className="ml-2 text-xs text-gray-500">
-                    {formatTime(msg.date)}
-                  </span>
-                </div>
-                <div className="flex flex-row items-center">
-                  <p
-                    className={msg.socketId === "system" ? "text-gray-500" : ""}
-                  >
-                    {msg.message}
-                  </p>
-                  {msg.username === username && (
-                    <span className="message-icons">
-                      <PencilIcon
-                        className="w-3 h-3 ml-1 text-gray-400 cursor-pointer"
-                        onClick={() =>
-                          handleEditMessage(msg.messageId, msg.message)
-                        }
-                      />
-                      <TrashIcon
-                        className="w-3 h-3 ml-1 text-gray-400 cursor-pointer"
-                        onClick={() => handleDeleteMessage(msg.messageId)}
-                      />
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+          <>
+            <ChatMessages
+              messages={messages}
+              username={username}
+              handleEditMessage={handleEditMessage}
+              handleDeleteMessage={handleDeleteMessage}
+            />
+            <div className="chat-input">
+              <input
+                type="text"
+                value={messageInput}
+                onChange={(e) => setMessageInput(e.target.value)}
+                placeholder="Message"
+                className="flex-grow p-2 border border-gray-300 rounded-l focus:border-gray-400 focus:outline-none"
+              />
+              <button
+                onClick={handleSubmitMessage}
+                className="p-2 text-white bg-blue-500 rounded-r hover:bg-blue-600"
+              >
+                {editMessageId ? (
+                  <PencilIcon className="w-5 h-5" />
+                ) : (
+                  <PaperAirplaneIcon className="w-5 h-5" />
+                )}
+              </button>
+            </div>
+          </>
         ) : (
           <div className="participants-list">
             <ul>
@@ -136,25 +126,6 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
             </ul>
           </div>
         )}
-        <div className="chat-input">
-          <input
-            type="text"
-            value={messageInput}
-            onChange={(e) => setMessageInput(e.target.value)}
-            placeholder="Message"
-            className="flex-grow p-2 border border-gray-300 rounded-l focus:border-gray-400 focus:outline-none"
-          />
-          <button
-            onClick={handleSubmitMessage}
-            className="p-2 text-white bg-blue-500 rounded-r hover:bg-blue-600"
-          >
-            {editMessageId ? (
-              <PencilIcon className="w-5 h-5" />
-            ) : (
-              <PaperAirplaneIcon className="w-5 h-5" />
-            )}
-          </button>
-        </div>
       </div>
     </div>
   );
