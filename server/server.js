@@ -11,14 +11,13 @@ const cors = require("cors");
 
 connectDB();
 
-// Create a new express applicatio n
+// Create a new express application, and enable CORS
 const app = express();
-// Enable CORS for express
 app.use(
   cors({
-    origin: "http://localhost:5174",
+    origin: "*",
     methods: ["GET", "POST"],
-    credentials: true, // Allow credentials if necessary
+    credentials: true,
   })
 );
 
@@ -31,7 +30,7 @@ const server = http.createServer(app);
 // Create a socket.io server and attach it to the http server
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173", // Allow the Vite development server's frontend to connect (adjust if necessary)
+    origin: "*",
     methods: ["GET", "POST"],
     credentials: true, // Allow credentials if necessary
   },
@@ -61,12 +60,12 @@ io.on("connection", (socket) => {
       });
     });
 
-    // Broadcast message to all clients when a new user joins
+    // Broadcast messages to all clients when a new user joins
     const joinMessage = new Message({
       messageId: uuidv4(),
       username: "Meetingbot",
       socketId: "system",
-      message: `${username} has joined the chat`,
+      message: `${username} has joined the chat.`,
       date: new Date().toISOString(),
     });
     joinMessage.save().then(() => {
@@ -129,7 +128,7 @@ io.on("connection", (socket) => {
           messageId: uuidv4(),
           username: "Meetingbot",
           socketId: "system",
-          message: `${user.username} has left the chat`,
+          message: `${user.username} has left the chat.`,
           date: new Date().toISOString(),
         });
         leaveMessage.save().then(() => {
