@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Message } from '../types/message'; // Adjust the import path as needed
+import { Message } from '../types/message';
 
 const useSocket = (
   socket: any,

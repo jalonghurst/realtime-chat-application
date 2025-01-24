@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { mockMessages } from "../services/mockData";
 import { Message } from "../types/message";
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/solid";
+import {
+  PencilIcon,
+  TrashIcon,
+  PaperAirplaneIcon,
+} from "@heroicons/react/24/solid";
 import { v4 as uuidv4 } from "uuid";
 import { fetchUsersAndMessages } from "../services/fetchData";
 import { formatTime } from "../utils/formatTime";
@@ -97,7 +101,7 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
                     {formatTime(msg.date)}
                   </span>
                 </div>
-                <div className="flex flex-row items-center">
+                <div className="flex-row items-center">
                   <p
                     className={msg.socketId === "system" ? "text-gray-500" : ""}
                   >
@@ -138,13 +142,17 @@ const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
             placeholder="Message"
-            className="flex-grow p-2 border border-gray-300 rounded-l"
+            className="flex-grow p-2 border border-gray-300 rounded-l focus:border-gray-400 focus:outline-none"
           />
           <button
             onClick={handleSubmitMessage}
             className="p-2 text-white bg-blue-500 rounded-r hover:bg-blue-600"
           >
-            {editMessageId ? "Edit" : "Send"}
+            {editMessageId ? (
+              <PencilIcon className="w-5 h-5" />
+            ) : (
+              <PaperAirplaneIcon className="w-5 h-5" />
+            )}
           </button>
         </div>
       </div>
