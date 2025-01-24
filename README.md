@@ -52,7 +52,7 @@ Time spent: Aproximately seven hours in total.
 ### What needs improvement:
 - Adding a loading state which displays whilst the data is being fetched.
 - Improve user experience by automatically scrolling to bottom of the messages container on page load, so that latest messages are seen first, and being able to submit messages with the enter key.
-- Performance improvements such as virtual scrolling, efficently handling large amounts of data by only rendered messages visible in the viewport, using libraries such as react-window.
+- Performance improvements such as virtual scrolling, efficently handling large amounts of data by only rendering messages visible in the viewport, using libraries such as react-window.
 - Error handling, ensure that each participant on the chat is always removed properly when disconnecting.
 - Improve code quality and readability by refactoring more code and moving into seperate components.
   
