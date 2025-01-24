@@ -30,15 +30,20 @@ app.use("/api", apiRoutes); // Attach API routes toexpress app
 const server = http.createServer(app);
 // Create a socket.io server and attach it to the http server
 const io = socketIo(server, {
-  transports: ["websocket"], // Allow only WebSocket transport
+  cors: {
+    origin: "http://localhost:5173", // Allow the Vite development server's frontend to connect (adjust if necessary)
+    methods: ["GET", "POST"],
+    credentials: true, // Allow credentials if necessary
+  },
+  transports: ["websocket"],
 });
 
 app.get("/", (req, res) => {
-  res.send("Hello World");
+  res.send("Chat server is running");
 });
 
 io.on("connection", (socket) => {
-  const { username } = socket.handshake.query;
+  const username = socket.handshake.query.username;
   console.log(`New client connected: ${socket.id} with username ${username}`);
 
   // Add user to the database collection of active users
@@ -53,31 +58,30 @@ io.on("connection", (socket) => {
           "activeUsers",
           users.map((user) => user.username)
         );
-        console.log("New active user added to the database:", newUser);
       });
     });
-  }
 
-  // Broadcast message to all clients when a new user joins
-  const joinMessage = new Message({
-    messageId: uuidv4(),
-    username: "Chatbot",
-    socketId: "system",
-    message: `${username} has joined the chat`,
-    date: new Date().toISOString(),
-  });
-  joinMessage.save().then(() => {
-    io.emit("message", joinMessage);
-  });
+    // Broadcast message to all clients when a new user joins
+    const joinMessage = new Message({
+      messageId: uuidv4(),
+      username: "Meetingbot",
+      socketId: "system",
+      message: `${username} has joined the chat`,
+      date: new Date().toISOString(),
+    });
+    joinMessage.save().then(() => {
+      io.emit("message", joinMessage);
+    });
+  }
 
   // Listen for new messages, and broadcast them to all connected clients
   socket.on("message", (messageData) => {
     const { username, socketId, message, messageId, date } = messageData;
     const newMessage = new Message({
+      messageId,
       username,
       socketId,
       message,
-      messageId,
       date,
     });
     newMessage.save().then(() => {
@@ -100,6 +104,14 @@ io.on("connection", (socket) => {
     });
   });
 
+  // Listen for message delete event
+  socket.on("deleteMessage", ({ messageId }) => {
+    Message.findOneAndDelete({ messageId }).then(() => {
+      console.log("Deleted message with id:", messageId);
+      io.emit("deleteMessage", messageId);
+    });
+  });
+
   // When a user disconnects
   socket.on("disconnect", () => {
     console.log(`User disconnected: ${socket.id}`);
@@ -115,15 +127,15 @@ io.on("connection", (socket) => {
         // Broadcast message to client when a user leaves
         const leaveMessage = new Message({
           messageId: uuidv4(),
-          username: "Chatbot",
+          username: "Meetingbot",
           socketId: "system",
-          message: `${username} has left the chat`,
+          message: `${user.username} has left the chat`,
           date: new Date().toISOString(),
         });
         leaveMessage.save().then(() => {
           io.emit("message", leaveMessage);
         });
-        console.log("User left:", username);
+        console.log("User left:", user.username);
       }
     });
   });

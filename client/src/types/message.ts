@@ -3,5 +3,5 @@ export interface Message {
     socketId: string;
     message: string;
     messageId: string;
-    date: Date;
+    date: string;
 }
