@@ -7,7 +7,7 @@ A chat app built with React, Vite, Tailwind CSS, Express, and Socket.io. Users h
 
 ## Technologies Used
 
-- **Frontend**: React, Vite, Tailwind CSS
+- **Frontend**: React, Typescript, Vite, Tailwind CSS
 - **Backend**: Express, Socket.io, Mongoose
 - **Database**: MongoDB
 
@@ -47,7 +47,7 @@ npm start
 
 Time spent: Aproximately seven hours in total. 
 
-### What needs improvement:
+### Ways to improve this application:
 - Improve user experience by automatically scrolling to bottom of the messages container on page load, so that latest messages are seen first, and being able to submit messages with the enter key.
 - Performance improvements such as virtual scrolling, efficently handling large amounts of data by only rendering messages visible in the viewport, using libraries such as react-window.
 - Spending more time on error handling, ensuring that each participant on the chat is always removed properly when disconnecting.
