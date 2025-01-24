@@ -13,9 +13,7 @@ interface ChatRoomProps {
 }
 
 const ChatRoom: React.FC<ChatRoomProps> = ({ socket, username }) => {
-  // State to store inputted message
   const [messageInput, setMessageInput] = useState<string>("");
-  // React state to store messages from server
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [editMessageId, setEditMessageId] = useState<string | null>(null);
   const [activeUsers, setActiveUsers] = useState<string[]>([]);

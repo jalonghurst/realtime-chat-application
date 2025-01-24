@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const User = require("./models/User");
-const Message = require("./models/Message");
+const User = require("../models/User");
+const Message = require("../models/Message");
 
 // Get messages from the database-sorted by date
 router.get("/messages", async (req, res) => {

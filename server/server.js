@@ -3,10 +3,10 @@ const http = require("http");
 const socketIo = require("socket.io");
 const { v4: uuidv4 } = require("uuid");
 require("dotenv").config();
-const connectDB = require("./db");
+const connectDB = require("./utils/db");
 const Message = require("./models/Message");
 const User = require("./models/User");
-const apiRoutes = require("./api");
+const apiRoutes = require("./routes/api");
 const cors = require("cors");
 
 connectDB();
