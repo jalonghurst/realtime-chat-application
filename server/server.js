@@ -93,21 +93,24 @@ io.on("connection", (socket) => {
   socket.on("editMessage", ({ messageId, updatedMessage }) => {
     Message.findOneAndUpdate(
       { messageId },
-      { message: updatedMessage },
-      { new: true }
+      { message: updatedMessage, isEdited: true },
+      { new: true },
+  
     ).then((message) => {
       if (message) {
         console.log("Edited message:", { messageId, updatedMessage });
-        io.emit("editMessage", { messageId, updatedMessage });
+        io.emit("editMessage", { messageId, updatedMessage, isEdited: true });
       }
+    }).catch((err) => {
+      console.error(err);
     });
   });
 
   // Listen for message delete event
   socket.on("deleteMessage", ({ messageId }) => {
-    Message.findOneAndDelete({ messageId }).then(() => {
+    Message.findOneAndUpdate({ messageId }, { message: "", isDeleted: true }).then(() => {
       console.log("Deleted message with id:", messageId);
-      io.emit("deleteMessage", messageId);
+      io.emit("deleteMessage", {messageId, isDeleted: true});
     });
   });
 

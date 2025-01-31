@@ -5,6 +5,8 @@ const messageSchema = new mongoose.Schema({
     username: { type: String, required: true },
     socketId: { type: String, required: true },
     message: { type: String, required: true },
+    isEdited: { type: Boolean, required: true, default: false },
+    isDeleted: {type: Boolean, required:true, default:false},
     date: { type: Date, required: true },
 });
 

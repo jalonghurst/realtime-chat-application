@@ -13,23 +13,25 @@ const useSocket = (
         setMessages((prevMessages) => [...prevMessages, messageData]);
       };
 
-      const handleDeleteMessage = (messageId: string) => {
+      const handleDeleteMessage = ({messageId, isDeleted}: { messageId: string, isDeleted: boolean }) => {
         setMessages((prevMessages) =>
-          prevMessages.filter((msg) => msg.messageId !== messageId)
+          prevMessages.map((msg) => msg.messageId !== messageId ? {...msg} : {...msg, isDeleted, message: ""})
         );
       };
 
       const handleEditMessage = ({
         messageId,
         updatedMessage,
+        isEdited,
       }: {
         messageId: string;
-        updatedMessage: string;
+          updatedMessage: string;
+          isEdited: boolean;
       }) => {
         setMessages((prevMessages) =>
           prevMessages.map((msg) =>
             msg.messageId === messageId
-              ? { ...msg, message: updatedMessage }
+              ? { ...msg, message: updatedMessage, isEdited }
               : msg
           )
         );

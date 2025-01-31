@@ -30,7 +30,13 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
             <p className={msg.socketId === "system" ? "text-gray-500" : ""}>
               {msg.message}
             </p>
-            {msg.username === username && (
+            {msg.isEdited && <span className="text-gray-400">(Edited)</span>}
+            {msg.isDeleted && (
+              <span className="text-gray-400">
+                This message has been deleted.
+              </span>
+            )}
+            {msg.username === username && !msg.isDeleted && (
               <span className="message-icons">
                 <PencilIcon
                   className="w-3 h-3 ml-1 text-gray-400 cursor-pointer"
